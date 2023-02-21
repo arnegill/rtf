@@ -1,7 +1,19 @@
-import React, { useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import React, { Suspense, useRef, useState } from 'react'
+import { Canvas } from '@react-three/fiber'
 import './style.css'
-import { OrbitControls } from '@react-three/drei'
+import {OrbitControls,
+        Environment,
+        Lightformer,
+        AccumulativeShadows,
+        RandomizedLight,
+        Float,
+        MeshReflectorMaterial,
+        useTexture
+ } from '@react-three/drei'
+import LinkedIn from './LinkedIn'
+import GitHub from './GitHub'
+import Floor from './Floor'
+
 
 function Box(props) {
   // This reference will give us direct access to the mesh
@@ -10,31 +22,49 @@ function Box(props) {
   const [hovered, setHover] = useState(false)
   const [active, setActive] = useState(false)
   // Subscribe this component to the render-loop, rotate the mesh every frame
-  useFrame((state, delta) => (mesh.current.rotation.x += delta))
   // Return view, these are regular three.js elements expressed in JSX
+  
   return (
     <mesh
       {...props}
       ref={mesh}
       scale={active ? 1.5 : 1}
-      onClick={(event) => setActive(!active)}
-      onPointerOver={(event) => setHover(true)}
-      onPointerOut={(event) => setHover(false)}>
+      onClick={() => setActive(!active)}
+      onPointerOver={() => setHover(true)}
+      onPointerOut={() => setHover(false)}>
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+      <MeshReflectorMaterial color={hovered ? 'hotpink' : 'orange'} />
     </mesh>
   )
 }
+
+
+
 function App() {
   return (
-    <Canvas>
-      <ambientLight />
-      <pointLight position={[10, 10, 10]} />
-      <Box position={[-1.2, 0, 0]} />
-      <Box position={[1.2, 0, 0]} />
+    <Canvas shadows>
+      <fog attach="fog" args={['#050505', 0, 20]} />
+      <Suspense>
+        <group position={[0,-1,0]}>
+          <AccumulativeShadows temporal frames={100} scale={12} alphaTest={0.85} position={[0, 0.04, 0]}>
+            <RandomizedLight amount={8} radius={10} ambient={0.5} position={[2.5, 5, -5]} bias={0.001} />
+          </AccumulativeShadows>
+          <LinkedIn  receiveShadow position={[-2, 1, 0]}/>
+          <Box  receiveShadow position={[0, 1, 0]} />
+          <GitHub  receiveShadow position={[3, 1, 0]} />
+        </group>
+        <Environment preset='forest' resolution={256} background blur={0.8}> 
+          <Lightformer intensity={5} form="ring" color="black" rotation-y={Math.PI / 2} position={[-5, 2, -1]} scale={[10, 10, 1]} />
+        </Environment>
+      </Suspense>
+      <Floor/>
+      <ambientLight intensity={0.5} />
+      <spotLight castShadow position={[0, 10, 0]} intensity={0.3} />
+      <directionalLight castShadow position={[-50, 0, -40]} intensity={0.7} />
       <OrbitControls />
     </Canvas>
   );
 }
+
 
 export default App;
