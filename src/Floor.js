@@ -1,10 +1,11 @@
 import React from 'react'
 import {MeshReflectorMaterial, useTexture } from '@react-three/drei'
 export default function Floor(){
-    const distort = useTexture('floor.jpg')
+    const distort = useTexture('wood.jpg')
+    const normal = useTexture('normal.jpg')
     return (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0,-1,0]}>
-        <circleGeometry args={[100, 100]} />
+        <planeGeometry args={[10, 10]} />
         <MeshReflectorMaterial
           blur={[300, 100]}
           resolution={2048}
@@ -17,7 +18,6 @@ export default function Floor(){
           color="#050505"
           mirror={1}
           metalness={1}
-          distortionMap={distort}
           distortion={1}
         />
         </mesh>

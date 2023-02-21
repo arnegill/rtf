@@ -13,6 +13,8 @@ import {OrbitControls,
 import LinkedIn from './LinkedIn'
 import GitHub from './GitHub'
 import Floor from './Floor'
+import Keyboard from './Keyboard'
+import Screens from './Screens'
 
 
 function Box(props) {
@@ -23,7 +25,6 @@ function Box(props) {
   const [active, setActive] = useState(false)
   // Subscribe this component to the render-loop, rotate the mesh every frame
   // Return view, these are regular three.js elements expressed in JSX
-  
   return (
     <mesh
       {...props}
@@ -42,19 +43,17 @@ function Box(props) {
 
 function App() {
   return (
-    <Canvas shadows>
-      <fog attach="fog" args={['#050505', 0, 20]} />
+    <Canvas  shadows>
       <Suspense>
         <group position={[0,-1,0]}>
           <AccumulativeShadows temporal frames={100} scale={12} alphaTest={0.85} position={[0, 0.04, 0]}>
             <RandomizedLight amount={8} radius={10} ambient={0.5} position={[2.5, 5, -5]} bias={0.001} />
           </AccumulativeShadows>
-          <LinkedIn  receiveShadow position={[-2, 1, 0]}/>
-          <Box  receiveShadow position={[0, 1, 0]} />
-          <GitHub  receiveShadow position={[3, 1, 0]} />
+          <Keyboard position={[1, 0, 0]}/>
+          <Screens position={[-2, 1, 0]}/>
         </group>
-        <Environment preset='forest' resolution={256} background blur={0.8}> 
-          <Lightformer intensity={5} form="ring" color="black" rotation-y={Math.PI / 2} position={[-5, 2, -1]} scale={[10, 10, 1]} />
+        <Environment color={'black'} resolution={256} background blur={0.8}> 
+          <Lightformer intensity={5} form="ring" color="lightblue" rotation-y={Math.PI / 2} position={[-5, 2, -1]} scale={[10, 10, 1]} />
         </Environment>
       </Suspense>
       <Floor/>
